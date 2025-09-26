@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>برنامه ورزشی </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Vazirmatn";src:local("Vazirmatn");}
+:root{--bg:#0f172a;--bg2:#111827;--card:#0b1225;--text:#e5e7eb;--muted:#9ca3af;--primary:#22d3ee;--accent:#60a5fa;--ok:#34d399;--danger:#f87171}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:"Vazirmatn", system-ui, -apple-system, Segoe UI, Roboto, Arial;color:var(--text);background:radial-gradient(1200px 600px at 10% 10%, rgba(96,165,250,.12), transparent),radial-gradient(1000px 800px at 90% 40%, rgba(34,211,238,.08), transparent),url("G:/5.jpg");background-size:cover;background-attachment:fixed}
+
+.overlay{position:fixed;inset:0;background:linear-gradient(180deg, rgba(15,23,42,.45), rgba(17,24,39,.45));backdrop-filter:blur(1px);pointer-events:none}
+.no-blur .overlay{backdrop-filter:none}
+.page main.card{position:relative;z-index:1}
+.card{max-width: 420px;margin: min(10vh,8rem) auto;padding: 2rem 2rem 2.4rem;border-radius:16px;background:linear-gradient(180deg, rgba(11,18,37,.92), rgba(11,18,37,.86));box-shadow:0 10px 30px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.06)}
+h1{margin:0 0 .6rem;font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
+.subtitle{margin:.2rem 0 1.2rem;color:var(--muted)}
+label{display:block;margin:.8rem 0 .4rem;color:var(--muted);font-weight:600}
+input,select,textarea{width:100%;padding:.8rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(17,24,39,.65);color:var(--text);outline:none}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(96,165,250,.18)}
+.btn-primary{margin-top:1rem;width:100%;padding:.9rem 1rem;border:0;border-radius:12px;background:linear-gradient(90deg, var(--accent), var(--primary));color:#06121c;font-weight:800;cursor:pointer}
+.btn-primary:hover{filter:brightness(1.05)}
+.hint{margin-top:.6rem;color:var(--muted);font-size:.85rem}
+.hint code{color:#a5b4fc}
+.error{margin-top:.8rem;color:var(--danger);min-height:1.2rem}
+.config-tip{margin-top:1rem;color:var(--muted)}
+
+/* workouts */
+.layout{display:grid;grid-template-columns:320px 1fr;gap:1.2rem;max-width:1100px;margin:4vh auto;padding:1rem}
+.panel{background:rgba(11,18,37,.85);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem}
+.user-card{display:flex;align-items:center;gap:.8rem}
+.user-card .meta{line-height:1.3}
+.user-card .name{font-weight:800}
+.user-card .type{color:var(--muted);font-size:.9rem}
+.day-selector{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.8rem}
+.chip{padding:.45rem .8rem;border-radius:999px;border:1px solid rgba(236, 13, 13, 0.1);background:rgb(157, 31, 31);cursor:default}
+.chipp{padding:.45rem .8rem;border-radius:999px;border:1px solid rgba(236, 13, 13, 0.1);background:rgb(52, 157, 63);cursor:default}
+.chip.active{background:linear-gradient(90deg, var(--accent), var(--primary));color:#06121c;font-weight:800}
+.workout-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.8rem}
+.workout-item{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(17,24,39,.55)}
+.workout-item .title{font-weight:700}
+.workout-item .detail{color:var(--muted)}
+.workout-item input[type=checkbox]{width:20px;height:20px}
+.toolbar{display:flex;gap:.5rem;justify-content:space-between;align-items:center;margin-top:.8rem}
+.link{color:var(--primary)}
+.footer-note{margin-top:1rem;color:var(--muted);font-size:.85rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+
+section{display:none}
+section.active{display:block}
+</style>
+</head>
+<body class="page">
+  <div class="overlay"></div>
+
+
+  <section id="view-login" class="active">
+    <main class="card">
+    
+      <h1 >ورود به برنامه ورزشی </h1>
+      <p class="subtitle">نام کاربری و رمز عبور خود را وارد کنید</p>
+      <form id="login-form">
+        <label for="username">نام کاربری</label>
+        <input id="username" name="username" type="text" autocomplete="username" required>
+        <label for="password">رمز عبور</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        
+        <button type="submit" class="btn-primary">ورود</button>
+        <div id="login-error" class="error" aria-live="polite"></div>
+      </form>
+    </main>
+  </section>
+
+
+  <section id="view-workouts">
+    <div class="layout">
+      <aside class="panel">
+        <div class="user-card">
+          <div class="meta">
+            <div class="name" id="user-name">—</div>
+            <div class="type">نوع برنامه: <span id="plan-type">—</span></div>
+          </div>
+        </div>
+        <div class="day-selector" id="day-selector"></div>
+        <div class="toolbar">
+          <button id="reset-day" class="chipp" type="button">ریست امروز</button>
+          <button id="logout" class="chip" type="button">خروج</button>
+        </div>
+        <p class="footer-note">موفق باشید! هر حرکت را انجام دادید، تیک بزنید.</p>
+      </aside>
+      <main class="panel">
+        <h2>تمرین‌های امروز</h2>
+        <div id="workout-list" class="workout-list"></div>
+        <div id="empty" class="footer-note" style="display:none">برای امروز برنامه‌ای ثبت نشده است.</div>
+      </main>
+    </div>
+  </section>
+
+  <script>
+
+
+  const encoded = "aHR0cHM6Ly9uZmMtY2FyZC1wYWdlLmdpdGh1Yi5pby9kYXRhLw==";
+  function getUrl(){ return atob(encoded); }
+  b=getUrl()  
+  const APP_CONFIG = { DATA_URL:b, STORAGE_KEY_PREFIX: 'fitness-progress' };
+
+
+  function showView(id){
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id==='view-workouts') { document.body.classList.add('no-blur'); } else { document.body.classList.remove('no-blur'); }
+  }
+  function saveSession(session){ sessionStorage.setItem('fitness-session', JSON.stringify(session)); }
+  function getSession(){ try{return JSON.parse(sessionStorage.getItem('fitness-session')||'null')}catch{return null} }
+  function storageKey(username, dayKey){ return APP_CONFIG.STORAGE_KEY_PREFIX + ':' + username + ':' + dayKey; }
+
+ 
+  async function fetchData(){
+    const res = await fetch(APP_CONFIG.DATA_URL, { cache: 'no-store' });
+    if(!res.ok) throw new Error('خطا در دریافت اطلاعات');
+    const contentType = (res.headers.get('content-type')||'').toLowerCase();
+    if(contentType.includes('application/json') || contentType.includes('text/json')){
+      return await res.json();
+    }
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const jsonTag = doc.getElementById('app-data');
+    if(!jsonTag) throw new Error('JSON پیدا نشد');
+    return JSON.parse(jsonTag.textContent || '{}');
+  }
+
+ 
+  (function initLogin(){
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('login-error');
+    if(!form) return;
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      errorEl.textContent = '';
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if(!username || !password){ errorEl.textContent = 'نام کاربری و رمز را وارد کنید'; return; }
+      try{
+        const data = await fetchData();
+        const user = (data.users||[]).find(u=>u.username===username && u.password===password);
+        if(!user){ errorEl.textContent = 'نام کاربری یا رمز نادرست است'; return; }
+        saveSession({ username: user.username, type: String(user.type||'1') });
+        startWorkouts();
+      }catch(err){ errorEl.textContent = err.message || 'اشکال در اتصال'; }
+    });
+  })();
+
+  
+  const daysFa = [
+    { key: 'sat', label: 'شنبه' },
+    { key: 'sun', label: 'یکشنبه' },
+    { key: 'mon', label: 'دوشنبه' },
+    { key: 'tue', label: 'سه‌شنبه' },
+    { key: 'wed', label: 'چهارشنبه' },
+    { key: 'thu', label: 'پنجشنبه' },
+    { key: 'fri', label: 'جمعه' }
+  ];
+  function getTodayKey(){ const d=new Date().getDay(); const map={6:'sat',0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri'}; return map[d]||'sat'; }
+
+  
+  function renderDays(currentKey){
+    const container = document.getElementById('day-selector');
+    container.innerHTML = '';
+    const d = daysFa.find(x=>x.key===currentKey) || daysFa[0];
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.textContent = d.label;
+    container.appendChild(chip);
+  }
+
+  function renderList(username, dayKey, list){
+    const container=document.getElementById('workout-list'); const empty=document.getElementById('empty'); container.innerHTML='';
+    if(!list||list.length===0){ empty.style.display='block'; return; } empty.style.display='none';
+
+    
+    let savedArr = [];
+    try{ savedArr = JSON.parse(localStorage.getItem(storageKey(username, dayKey)) || '[]'); }catch(e){ savedArr = []; }
+    const saved = new Set((savedArr||[]).map(String));
+
+    list.forEach((item, idx)=>{ const row=document.createElement('div'); row.className='workout-item';
+      const left=document.createElement('div'); const title=document.createElement('div'); title.className='title'; title.textContent=item.name||'حرکت';
+      const detail=document.createElement('div'); detail.className='detail'; detail.textContent=item.detail||''; left.appendChild(title); left.appendChild(detail);
+      const check=document.createElement('input'); check.type='checkbox'; check.checked=saved.has(String(idx));
+      check.addEventListener('change',()=>{
+        if(check.checked) saved.add(String(idx)); else saved.delete(String(idx));
+        try{ localStorage.setItem(storageKey(username, dayKey), JSON.stringify(Array.from(saved))); }catch(e){ console.warn('ذخیره‌سازی محلی ممکن نیست', e); }
+      });
+      row.appendChild(left); row.appendChild(check); container.appendChild(row); });
+  }
+
+  async function loadDay(dayKey){
+    const session=getSession(); if(!session){ showView('view-login'); return; }
+    renderDays(dayKey);
+    let data = { plans: { types: {} } };
+    try{
+      data = await fetchData();
+    }catch(e){
+   
+      console.warn('خطا در fetchData:', e);
+    }
+    const type=String(session.type||'1');
+    const plan = data?.plans?.types?.[type]?.days?.[dayKey] || [];
+    renderList(session.username, dayKey, plan);
+  }
+
+  async function startWorkouts(){
+    const session=getSession(); if(!session){ showView('view-login'); return; }
+    document.getElementById('user-name').textContent=session.username;
+    document.getElementById('plan-type').textContent=session.type;
+    showView('view-workouts');
+    const today=getTodayKey(); renderDays(today); await loadDay(today);
+
+    document.getElementById('reset-day').addEventListener('click', ()=>{ localStorage.removeItem(storageKey(session.username, getTodayKey())); loadDay(getTodayKey()); });
+    document.getElementById('logout').addEventListener('click', ()=>{ sessionStorage.removeItem('fitness-session'); showView('view-login'); });
+  }
+
+
+  (function autoStart(){ if(getSession()) startWorkouts(); })();
+  </script>
+</body>
+</html>
